@@ -1,7 +1,13 @@
 <template>
-  <div>
+  <div class="step">
     <hr>
-    <h2 @click="() => { selectStep(stepIndex) }">{{wizardData[stepIndex].title}}</h2>
+    <h2
+      :class="{ muted: step !== stepIndex,
+        clickable: visitedSteps.includes(stepIndex) && stepIndex !== step}"
+      @click="() => { selectStep(stepIndex) }"
+    >
+      {{wizardData[stepIndex].title}}<span v-if="step === stepIndex">:</span>
+    </h2>
     <div v-if="stepIndex === step">
       <variant
         v-for="(variant, i) in wizardData[stepIndex].variants"
@@ -17,7 +23,7 @@
 <script lang="ts">
 import Variant from '@/components/Variant.vue';
 import { Options, Vue } from 'vue-class-component';
-import { mapActions, mapMutations, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 @Options({
   components: {
@@ -30,7 +36,7 @@ import { mapActions, mapMutations, mapState } from 'vuex';
     },
   },
   computed: {
-    ...mapState(['step', 'wizardData', 'inputData']),
+    ...mapState(['step', 'visitedSteps', 'wizardData', 'inputData']),
   },
   methods: {
     ...mapActions(['selectStep']),
@@ -42,5 +48,7 @@ export default class Step extends Vue {
 </script>
 
 <style scoped lang="scss">
-
+  .step {
+    margin-bottom: 14px;
+  }
 </style>

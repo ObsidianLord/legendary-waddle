@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div class="price-wizard">
     <step
       v-for="(step, i) in wizardData"
       :key="i"
       :step-index="i"
     ></step>
-  </div>
-  <div>
-    <div>Итого к оплате</div>
-    <div>{{totalPrice}}</div>
+    <div class="total-price">
+      <div class="total-price__title">Итого к оплате</div>
+      <div>{{totalPrice.toLocaleString('en').replaceAll(',',' ')}}&nbsp;₽</div>
+    </div>
   </div>
 </template>
 
@@ -21,9 +21,6 @@ import { mapActions, mapGetters, mapState } from 'vuex';
   components: {
     Step,
   },
-  props: {
-    msg: String,
-  },
   mounted() {
     this.fetchWizardData();
   },
@@ -35,11 +32,27 @@ import { mapActions, mapGetters, mapState } from 'vuex';
     ...mapActions(['fetchWizardData']),
   },
 })
-export default class PriceWizard extends Vue {
-  msg!: string
-}
+export default class PriceWizard extends Vue {}
 </script>
 
 <style scoped lang="scss">
-
+  .price-wizard {
+    max-width: 100%;
+    @media (min-width: 780px) {
+      max-width: 778px;
+    }
+  }
+  .total-price {
+    background-color: #2FCB5A;
+    border-radius: 3px;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    text-transform: uppercase;
+    font-size: 18pt;
+    padding: 20px;
+    &__title {
+      font-weight: 700;
+    }
+  }
 </style>

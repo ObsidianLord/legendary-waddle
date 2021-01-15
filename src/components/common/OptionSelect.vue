@@ -1,15 +1,20 @@
 <template>
-  <div>
-    {{selectData.title}}
-    <select
-      :value="selectData.items[selectedIndex].title"
-      @change="onChange($event)"
-    >
-      <option
-        v-for="(option, i) in selectData.items"
-        :key="i"
-      >{{option.title}}</option>
-    </select>
+  <div class="option-select">
+    <div class="option-select__title">
+      {{selectData.title}}
+    </div>
+    <div class="option-select__select">
+      <select
+        :value="selectData.items[selectedIndex].title"
+        class="button"
+        @change="onChange($event)"
+      >
+        <option
+          v-for="(option, i) in selectData.items"
+          :key="i"
+        >{{option.title}}</option>
+      </select>
+    </div>
   </div>
 </template>
 
@@ -57,7 +62,7 @@ import { mapMutations, mapState } from 'vuex';
         this.setSelectOption({
           stepIndex: this.stepIndex,
           variantIndex: this.variantIndex,
-          selectedIndex: this.selectedIndex,
+          selectIndex: this.selectIndex,
           newVal: this.selectData.items.map((item: Option): string => item.title)
             .indexOf(event.target.value),
         });
@@ -75,5 +80,19 @@ export default class OptionSelect extends Vue {
 </script>
 
 <style scoped lang="scss">
-
+.option-select {
+  margin-bottom: 12px;
+  &__title {
+    font-size: 9pt;
+    color: #666666;
+    margin-bottom: 10px;
+  }
+  &__select {
+    width: 100%;
+    select {
+      width: 100%;
+      border: 2px solid #DDDDDD;
+    }
+  }
+}
 </style>

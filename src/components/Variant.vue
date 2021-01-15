@@ -1,30 +1,49 @@
 <template>
-  <div>
-    <h1>{{variant.title}}</h1>
-    <div>
-      <pre>{{variant.description}}</pre>
-    </div>
-    <div>
-      <checkbox
-        v-for="(option, optionIndex) in variant.options"
-        :key="optionIndex"
-        :title="option.title"
-        :selected="model.options[optionIndex]"
-        :onclick="() => {
-          setVariantOption(getVariantOptionTogglePayload(optionIndex, model.options[optionIndex]))
-        }"
-      ></checkbox>
-      <option-select
-        v-for="(selectOption, selectOptionIndex) in variant.select"
-        :key="selectOptionIndex"
-        :stepIndex="stepIndex"
-        :variantIndex="variantIndex"
-        :selectIndex="selectOptionIndex"
-      ></option-select>
-      <select-button
-        :stepIndex="stepIndex"
-        :variantIndex="variantIndex"
-      ></select-button>
+  <div class="variant">
+    <div
+      class="variant__outline"
+      :style="{ backgroundColor: variant.color }"
+    ></div>
+    <div class="variant__content">
+      <div class="variant__content-title-row">
+        <h1>{{variant.title}}</h1>
+        <div class="variant__content-title-row-price">
+          {{price.toLocaleString('en').replaceAll(',',' ')}}&nbsp;₽
+        </div>
+      </div>
+
+      <div class="variant__content-main">
+        <div class="variant__content-main-description">
+          <p
+            v-for="(paragraph, pIndex) in variant.description.split('\n')"
+            :key="pIndex"
+          >{{paragraph}}</p>
+        </div>
+        <div class="variant__content-main-options">
+          <checkbox
+            v-for="(option, optionIndex) in variant.options"
+            :key="optionIndex"
+            :title="option.title"
+            :selected="model.options[optionIndex]"
+            :onclick="() => {
+              setVariantOption(
+                getVariantOptionTogglePayload(optionIndex, model.options[optionIndex])
+              )
+            }"
+          ></checkbox>
+          <option-select
+            v-for="(selectOption, selectOptionIndex) in variant.select"
+            :key="selectOptionIndex"
+            :stepIndex="stepIndex"
+            :variantIndex="variantIndex"
+            :selectIndex="selectOptionIndex"
+          ></option-select>
+          <select-button
+            :stepIndex="stepIndex"
+            :variantIndex="variantIndex"
+          ></select-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -63,10 +82,23 @@ import { mapMutations, mapState } from 'vuex';
     }),
     ...mapState({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      model(state: any): WizardVariant {
+      model(state: any): VariantInput {
         return state.inputData[this.stepIndex].variants[this.variantIndex];
       },
     }),
+    price(): number {
+      let sum = 0;
+      sum += this.variant.price_default;
+      this.model.options.forEach((option: boolean, optionIndex: number) => {
+        if (option) {
+          sum += this.variant.options[optionIndex].price;
+        }
+      });
+      this.model.select.forEach((select: number, selectIndex: number) => {
+        sum += this.variant.select[selectIndex].items[select].price;
+      });
+      return sum;
+    },
   },
   methods: {
     ...mapMutations(['setVariantOption']),
@@ -88,5 +120,49 @@ export default class Variant extends Vue {
 </script>
 
 <style scoped lang="scss">
-
+  .variant {
+    background-color: #F8F8F8;
+    display: flex;
+    margin: 16px 0;
+    &__outline {
+      background-color: #CCCCCC;
+      border-radius: 4px 0 0 4px;
+      width: 6px;
+    }
+    &__content {
+      padding: 16px;
+      width: 100%;
+      &-title-row {
+        display: flex;
+        justify-content: space-between;
+        &-price {
+          font-size: 14pt;
+          font-weight: 500;
+        }
+      }
+      &-main{
+        @media (min-width: 780px) {
+          display: flex;
+        }
+        &-description {
+          font-size: 11pt;
+          color: #666666;
+          font-weight: 500;
+          width: 100%;
+        }
+        &-options {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          @media (min-width: 780px) {
+            border-left: 2px solid #DDDDDD;
+            min-width: 205px;
+            max-width: 205px;
+            margin-left: 14px;
+            padding: 14px 14px 0;
+          }
+        }
+      }
+    }
+  }
 </style>
