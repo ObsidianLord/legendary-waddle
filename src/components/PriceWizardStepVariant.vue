@@ -131,7 +131,6 @@ export default class PriceWizardStepVariant extends Vue {
 
 <style scoped lang="scss">
   .variant {
-    background-color: #F8F8F8;
     display: flex;
     margin: 16px 0;
     &__outline {
@@ -142,6 +141,8 @@ export default class PriceWizardStepVariant extends Vue {
     &__content {
       padding: 16px;
       width: 100%;
+      border-radius: 0 4px 4px 0;
+      background-color: #F8F8F8;
       &-title-row {
         display: flex;
         justify-content: space-between;
