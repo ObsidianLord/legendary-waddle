@@ -53,8 +53,11 @@ export default class PriceWizard extends Vue {}
     display: flex;
     justify-content: space-between;
     text-transform: uppercase;
-    font-size: 18pt;
+    font-size: 14pt;
     padding: 20px;
+    @media (min-width: 780px) {
+      font-size: 18pt;
+    }
     &__title {
       font-weight: 700;
     }
