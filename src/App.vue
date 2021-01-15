@@ -18,7 +18,9 @@ export default class App extends Vue {}
 
 <style lang="scss">
 .main-container {
-  margin-top: 60px;
+  @media (min-width: 780px) {
+    margin-top: 60px;
+  }
   display: flex;
   justify-content: center;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
