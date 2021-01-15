@@ -1,22 +1,18 @@
 <template>
   <div
     class="checkbox button"
-    @click="onclick"
+    @click="onClick"
   >
-    <div
-      class="checkbox__box"
-    >
+    <div class="checkbox__box">
       <input
         :key="selected"
         :checked="selected"
         class="clickable"
         type="checkbox"
-        @change="oncbclick($event)"
+        @change="onCBClick($event)"
       >
     </div>
-    <div
-      class="checkbox__title"
-    >{{title}}</div>
+    <div class="checkbox__title">{{ title }}</div>
   </div>
 </template>
 
@@ -35,7 +31,7 @@ import { mapState } from 'vuex';
       required: false,
       default: false,
     },
-    onclick: {
+    onClick: {
       type: Function,
       required: false,
     },
@@ -45,13 +41,13 @@ import { mapState } from 'vuex';
   },
   methods: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    oncbclick(event: any) {
+    onCBClick(event: any) {
       event.preventDefault();
-      this.onclick();
+      this.onClick();
     },
   },
 })
-export default class Checkbox extends Vue {
+export default class PriceWizardStepVariantOption extends Vue {
   title!: string;
 
   selected!: boolean;

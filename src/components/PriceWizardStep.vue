@@ -6,28 +6,27 @@
         clickable: visitedSteps.includes(stepIndex) && stepIndex !== step}"
       @click="() => { selectStep(stepIndex) }"
     >
-      {{wizardData[stepIndex].title}}<span v-if="step === stepIndex">:</span>
+      {{ wizardData[stepIndex].title }}<span v-if="step === stepIndex">:</span>
     </h2>
     <div v-if="stepIndex === step">
-      <variant
+      <PriceWizardStepVariant
         v-for="(variant, i) in wizardData[stepIndex].variants"
         :key="i"
         :step-index="stepIndex"
         :variant-index="i"
-      >
-      </variant>
+      ></PriceWizardStepVariant>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Variant from '@/components/Variant.vue';
+import PriceWizardStepVariant from '@/components/PriceWizardStepVariant.vue';
 import { Options, Vue } from 'vue-class-component';
 import { mapActions, mapState } from 'vuex';
 
 @Options({
   components: {
-    Variant,
+    PriceWizardStepVariant,
   },
   props: {
     stepIndex: {
@@ -42,7 +41,7 @@ import { mapActions, mapState } from 'vuex';
     ...mapActions(['selectStep']),
   },
 })
-export default class Step extends Vue {
+export default class PriceWizardStep extends Vue {
   stepIndex!: number;
 }
 </script>

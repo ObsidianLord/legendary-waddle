@@ -38,7 +38,7 @@ import { mapActions, mapState } from 'vuex';
     },
   },
 })
-export default class SelectButton extends Vue {
+export default class PriceWizardStepVariantButton extends Vue {
   stepIndex!: number;
 
   variantIndex!: number;

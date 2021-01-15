@@ -6,9 +6,9 @@
     ></div>
     <div class="variant__content">
       <div class="variant__content-title-row">
-        <h1>{{variant.title}}</h1>
+        <h1>{{ variant.title }}</h1>
         <div class="variant__content-title-row-price">
-          {{price.toLocaleString('en').replaceAll(',',' ')}}&nbsp;₽
+          {{ formattedPrice }}&nbsp;₽
         </div>
       </div>
 
@@ -17,31 +17,31 @@
           <p
             v-for="(paragraph, pIndex) in variant.description.split('\n')"
             :key="pIndex"
-          >{{paragraph}}</p>
+          >{{ paragraph }}</p>
         </div>
         <div class="variant__content-main-options">
-          <checkbox
+          <PriceWizardStepVariantOption
             v-for="(option, optionIndex) in variant.options"
             :key="optionIndex"
             :title="option.title"
             :selected="model.options[optionIndex]"
-            :onclick="() => {
+            :on-click="() => {
               setVariantOption(
                 getVariantOptionTogglePayload(optionIndex, model.options[optionIndex])
               )
             }"
-          ></checkbox>
-          <option-select
+          ></PriceWizardStepVariantOption>
+          <PriceWizardStepVariantSelect
             v-for="(selectOption, selectOptionIndex) in variant.select"
             :key="selectOptionIndex"
             :stepIndex="stepIndex"
             :variantIndex="variantIndex"
             :selectIndex="selectOptionIndex"
-          ></option-select>
-          <select-button
+          ></PriceWizardStepVariantSelect>
+          <PriceWizardStepVariantButton
             :stepIndex="stepIndex"
             :variantIndex="variantIndex"
-          ></select-button>
+          ></PriceWizardStepVariantButton>
         </div>
       </div>
     </div>
@@ -49,9 +49,10 @@
 </template>
 
 <script lang="ts">
-import Checkbox from '@/components/common/Checkbox.vue';
-import OptionSelect from '@/components/common/OptionSelect.vue';
-import SelectButton from '@/components/common/SelectButton.vue';
+import formatPrice from '@/util/formatPrice';
+import PriceWizardStepVariantSelect from '@/components/controls/PriceWizardStepVariantSelect.vue';
+import PriceWizardStepVariantOption from '@/components/controls/PriceWizardStepVariantOption.vue';
+import PriceWizardStepVariantButton from '@/components/controls/PriceWizardStepVariantButton.vue';
 import { VariantInput } from '@/types/StepInput';
 import { WizardVariant } from '@/types/WizardStep';
 import { Options, Vue } from 'vue-class-component';
@@ -59,10 +60,11 @@ import { mapMutations, mapState } from 'vuex';
 
 @Options({
   components: {
-    Checkbox,
-    OptionSelect,
-    SelectButton,
+    PriceWizardStepVariantSelect,
+    PriceWizardStepVariantOption,
+    PriceWizardStepVariantButton,
   },
+
   props: {
     stepIndex: {
       type: Number,
@@ -73,6 +75,7 @@ import { mapMutations, mapState } from 'vuex';
       required: true,
     },
   },
+
   computed: {
     ...mapState({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,12 +83,14 @@ import { mapMutations, mapState } from 'vuex';
         return state.wizardData[this.stepIndex].variants[this.variantIndex];
       },
     }),
+
     ...mapState({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       model(state: any): VariantInput {
         return state.inputData[this.stepIndex].variants[this.variantIndex];
       },
     }),
+
     price(): number {
       let sum = 0;
       sum += this.variant.price_default;
@@ -99,7 +104,12 @@ import { mapMutations, mapState } from 'vuex';
       });
       return sum;
     },
+
+    formattedPrice(): string {
+      return formatPrice(this.price);
+    },
   },
+
   methods: {
     ...mapMutations(['setVariantOption']),
     getVariantOptionTogglePayload(optionIndex: number, oldVal: boolean) {
@@ -112,7 +122,7 @@ import { mapMutations, mapState } from 'vuex';
     },
   },
 })
-export default class Variant extends Vue {
+export default class PriceWizardStepVariant extends Vue {
   stepIndex!: number;
 
   variantIndex!: number;

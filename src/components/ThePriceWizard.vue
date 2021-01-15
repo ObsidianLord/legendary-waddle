@@ -1,25 +1,26 @@
 <template>
   <div class="price-wizard">
-    <step
+    <PriceWizardStep
       v-for="(step, i) in wizardData"
       :key="i"
       :step-index="i"
-    ></step>
+    ></PriceWizardStep>
     <div class="total-price">
       <div class="total-price__title">Итого к оплате</div>
-      <div>{{totalPrice.toLocaleString('en').replaceAll(',',' ')}}&nbsp;₽</div>
+      <div>{{ formattedTotalPrice }}&nbsp;₽</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Step from '@/components/Step.vue';
+import formatPrice from '@/util/formatPrice';
+import PriceWizardStep from '@/components/PriceWizardStep.vue';
 import { Options, Vue } from 'vue-class-component';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 @Options({
   components: {
-    Step,
+    PriceWizardStep,
   },
   mounted() {
     this.fetchWizardData();
@@ -27,6 +28,9 @@ import { mapActions, mapGetters, mapState } from 'vuex';
   computed: {
     ...mapState(['wizardData', 'inputData']),
     ...mapGetters(['totalPrice']),
+    formattedTotalPrice(): string {
+      return formatPrice(this.totalPrice);
+    },
   },
   methods: {
     ...mapActions(['fetchWizardData']),

@@ -12,7 +12,7 @@
         <option
           v-for="(option, i) in selectData.items"
           :key="i"
-        >{{option.title}}</option>
+        >{{ option.title }}</option>
       </select>
     </div>
   </div>
@@ -38,6 +38,7 @@ import { mapMutations, mapState } from 'vuex';
       required: true,
     },
   },
+
   computed: {
     ...mapState({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,14 +47,17 @@ import { mapMutations, mapState } from 'vuex';
           .wizardData[this.stepIndex].variants[this.variantIndex].select[this.selectIndex];
       },
     }),
+
     ...mapState({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       selectedIndex(state: any): number {
         return state.inputData[this.stepIndex].variants[this.variantIndex].select[this.selectIndex];
       },
     }),
+
     ...mapState(['wizardData', 'inputData']),
   },
+
   methods: {
     ...mapMutations(['setSelectOption']),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,7 +74,7 @@ import { mapMutations, mapState } from 'vuex';
     },
   },
 })
-export default class OptionSelect extends Vue {
+export default class PriceWizardStepVariantSelect extends Vue {
   stepIndex!: number;
 
   variantIndex!: number;
