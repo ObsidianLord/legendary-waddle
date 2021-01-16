@@ -9,7 +9,7 @@
         :checked="selected"
         class="clickable"
         type="checkbox"
-        @change="onCBClick($event)"
+        @change.prevent="onClick"
       >
     </div>
     <div class="checkbox__title">{{ title }}</div>
@@ -33,13 +33,6 @@ import { Options, Vue } from 'vue-class-component';
     onClick: {
       type: Function,
       required: false,
-    },
-  },
-  methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onCBClick(event: any) {
-      event.preventDefault();
-      this.onClick();
     },
   },
 })
