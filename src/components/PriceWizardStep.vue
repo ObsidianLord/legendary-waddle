@@ -2,8 +2,7 @@
   <div class="step">
     <hr>
     <h2
-      :class="{ muted: collapsed,
-        clickable: expandable }"
+      :class="titleClass"
       @click="() => { selectStep(stepData) }"
     >
       {{ stepData.title }}<span v-if="!collapsed">:</span>
@@ -43,6 +42,14 @@ import { mapActions } from 'vuex';
       type: Boolean,
       required: false,
       default: false,
+    },
+  },
+  computed: {
+    titleClass(): object {
+      return {
+        muted: this.collapsed,
+        clickable: this.expandable,
+      };
     },
   },
   methods: {
