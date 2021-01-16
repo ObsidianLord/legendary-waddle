@@ -3,7 +3,9 @@
     <PriceWizardStep
       v-for="(step, i) in wizardData"
       :key="i"
-      :step-index="i"
+      :step-data="step"
+      :collapsed="currentStep !== i"
+      :expandable="currentStep !== i && visitedSteps.includes(i)"
     ></PriceWizardStep>
     <div class="total-price">
       <div class="total-price__title">Итого к оплате</div>
@@ -26,7 +28,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
     this.fetchWizardData();
   },
   computed: {
-    ...mapState(['wizardData', 'inputData']),
+    ...mapState(['wizardData', 'currentStep', 'visitedSteps']),
     ...mapGetters(['totalPrice']),
     formattedTotalPrice(): string {
       return formatPrice(this.totalPrice);

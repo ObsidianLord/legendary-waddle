@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { mapState } from 'vuex';
 
 @Options({
   props: {
@@ -36,9 +35,6 @@ import { mapState } from 'vuex';
       required: false,
     },
   },
-  computed: {
-    ...mapState(['wizardData', 'inputData']),
-  },
   methods: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onCBClick(event: any) {
@@ -47,12 +43,12 @@ import { mapState } from 'vuex';
     },
   },
 })
-export default class PriceWizardStepVariantOption extends Vue {
+export default class BaseCheckbox extends Vue {
   title!: string;
 
   selected!: boolean;
 
-  onclick!: () => void;
+  onClick!: () => void;
 }
 </script>
 

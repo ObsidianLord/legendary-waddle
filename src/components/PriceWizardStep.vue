@@ -2,18 +2,18 @@
   <div class="step">
     <hr>
     <h2
-      :class="{ muted: step !== stepIndex,
-        clickable: visitedSteps.includes(stepIndex) && stepIndex !== step}"
-      @click="() => { selectStep(stepIndex) }"
+      :class="{ muted: collapsed,
+        clickable: expandable }"
+      @click="() => { selectStep(stepData) }"
     >
-      {{ wizardData[stepIndex].title }}<span v-if="step === stepIndex">:</span>
+      {{ stepData.title }}<span v-if="!collapsed">:</span>
     </h2>
-    <div v-if="stepIndex === step">
+    <div v-if="!collapsed">
       <PriceWizardStepVariant
-        v-for="(variant, i) in wizardData[stepIndex].variants"
+        v-for="(variant, i) in stepData.variants"
         :key="i"
-        :step-index="stepIndex"
-        :variant-index="i"
+        :step-data="stepData"
+        :variant="variant"
       ></PriceWizardStepVariant>
     </div>
   </div>
@@ -21,28 +21,40 @@
 
 <script lang="ts">
 import PriceWizardStepVariant from '@/components/PriceWizardStepVariant.vue';
+import { WizardStep } from '@/types/WizardStep';
 import { Options, Vue } from 'vue-class-component';
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 
 @Options({
   components: {
     PriceWizardStepVariant,
   },
   props: {
-    stepIndex: {
-      type: Number,
+    stepData: {
+      type: Object,
       required: true,
     },
-  },
-  computed: {
-    ...mapState(['step', 'visitedSteps', 'wizardData', 'inputData']),
+    collapsed: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    expandable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   methods: {
     ...mapActions(['selectStep']),
   },
 })
 export default class PriceWizardStep extends Vue {
-  stepIndex!: number;
+  stepData!: WizardStep;
+
+  collapsed!: boolean;
+
+  expandable!: boolean;
 }
 </script>
 
