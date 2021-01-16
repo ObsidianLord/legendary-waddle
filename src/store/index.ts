@@ -5,7 +5,7 @@ import { StepInput, VariantInput } from '@/types/StepInput';
 
 export default createStore({
   state: {
-    step: 0,
+    currentStep: 0,
     visitedSteps: [0],
     wizardData: Array<WizardStep>(),
     inputData: Array<StepInput>(),
@@ -27,8 +27,10 @@ export default createStore({
     },
 
     setVariantOption(state, {
-      stepIndex, variantIndex, optionIndex, newVal,
+      stepData, variant, optionIndex, newVal,
     }): void {
+      const stepIndex: number = state.wizardData.indexOf(stepData);
+      const variantIndex: number = stepData.variants.indexOf(variant);
       state
         .inputData[stepIndex]
         .variants[variantIndex]
@@ -36,8 +38,10 @@ export default createStore({
     },
 
     setSelectOption(state, {
-      stepIndex, variantIndex, selectIndex, newVal,
+      stepData, variant, selectIndex, newVal,
     }): void {
+      const stepIndex: number = state.wizardData.indexOf(stepData);
+      const variantIndex: number = stepData.variants.indexOf(variant);
       state
         .inputData[stepIndex]
         .variants[variantIndex]
@@ -48,7 +52,7 @@ export default createStore({
       if (!state.visitedSteps.includes(step)) {
         state.visitedSteps.push(step);
       }
-      state.step = step;
+      state.currentStep = step;
     },
 
     setSelectedVariant(state, {
@@ -57,7 +61,7 @@ export default createStore({
     }): void {
       state.inputData[stepIndex].variants.forEach(
         (variant: VariantInput, i: number) => {
-          const currentVariant = variant;
+          const currentVariant: VariantInput = variant;
           currentVariant.isSelected = variantIndex === i;
         },
       );
@@ -72,9 +76,11 @@ export default createStore({
     },
 
     selectVariant({ commit, state }, {
-      stepIndex,
-      variantIndex,
+      stepData,
+      variant,
     }): void {
+      const stepIndex: number = state.wizardData.indexOf(stepData);
+      const variantIndex: number = stepData.variants.indexOf(variant);
       commit('setSelectedVariant', {
         stepIndex,
         variantIndex,
@@ -84,7 +90,8 @@ export default createStore({
       }
     },
 
-    selectStep({ commit, state }, stepIndex): void {
+    selectStep({ commit, state }, step: number | WizardStep): void {
+      const stepIndex: number = typeof step === 'number' ? step : state.wizardData.indexOf(step);
       if (state.visitedSteps.includes(stepIndex)) {
         commit('setStep', stepIndex);
       }

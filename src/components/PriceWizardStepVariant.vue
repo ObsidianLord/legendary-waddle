@@ -25,11 +25,7 @@
             :key="optionIndex"
             :title="option.title"
             :selected="model.options[optionIndex]"
-            :on-click="() => {
-              setVariantOption(
-                getVariantOptionTogglePayload(optionIndex, model.options[optionIndex])
-              )
-            }"
+            :on-click="() => { toggleCheckbox(optionIndex, model.options[optionIndex]) }"
           ></BaseCheckbox>
           <BaseSelect
             v-for="(selectOption, selectOptionIndex) in variant.select"
@@ -55,7 +51,7 @@ import BaseSelect from '@/components/common/BaseSelect.vue';
 import BaseCheckbox from '@/components/common/BaseCheckbox.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { VariantInput } from '@/types/StepInput';
-import { Option, WizardVariant } from '@/types/WizardStep';
+import { Option, WizardStep, WizardVariant } from '@/types/WizardStep';
 import { Options, Vue } from 'vue-class-component';
 import { mapActions, mapMutations, mapState } from 'vuex';
 
@@ -67,12 +63,12 @@ import { mapActions, mapMutations, mapState } from 'vuex';
   },
 
   props: {
-    stepIndex: {
-      type: Number,
+    stepData: {
+      type: Object,
       required: true,
     },
-    variantIndex: {
-      type: Number,
+    variant: {
+      type: Object,
       required: true,
     },
   },
@@ -80,15 +76,10 @@ import { mapActions, mapMutations, mapState } from 'vuex';
   computed: {
     ...mapState({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      variant(state: any): WizardVariant {
-        return state.wizardData[this.stepIndex].variants[this.variantIndex];
-      },
-    }),
-
-    ...mapState({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       model(state: any): VariantInput {
-        return state.inputData[this.stepIndex].variants[this.variantIndex];
+        const stepIndex: number = state.wizardData.indexOf(this.stepData);
+        const variantIndex: number = this.stepData.variants.indexOf(this.variant);
+        return state.inputData[stepIndex].variants[variantIndex];
       },
     }),
 
@@ -118,26 +109,34 @@ import { mapActions, mapMutations, mapState } from 'vuex';
   methods: {
     ...mapMutations(['setVariantOption', 'setSelectOption']),
     ...mapActions(['selectVariant']),
+
+    toggleCheckbox(optionIndex: number, oldVal: boolean) {
+      this.setVariantOption(
+        this.getVariantOptionTogglePayload(optionIndex, oldVal),
+      );
+    },
+
     getVariantOptionTogglePayload(optionIndex: number, oldVal: boolean) {
       return {
-        stepIndex: this.stepIndex,
-        variantIndex: this.variantIndex,
+        stepData: this.stepData,
+        variant: this.variant,
         optionIndex,
         newVal: !oldVal,
       };
     },
+
     selectCurrentVariant(): void {
       this.selectVariant({
-        stepIndex: this.stepIndex,
-        variantIndex: this.variantIndex,
+        stepData: this.stepData,
+        variant: this.variant,
       });
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSelectChange(selectIndex: number, event: any): void {
       if (event !== null && event.target) {
         this.setSelectOption({
-          stepIndex: this.stepIndex,
-          variantIndex: this.variantIndex,
+          stepData: this.stepData,
+          variant: this.variant,
           selectIndex,
           newVal: this.variant.select[selectIndex]
             .items.map((item: Option): string => item.title).indexOf(event.target.value),
@@ -147,9 +146,9 @@ import { mapActions, mapMutations, mapState } from 'vuex';
   },
 })
 export default class PriceWizardStepVariant extends Vue {
-  stepIndex!: number;
+  stepData!: WizardStep;
 
-  variantIndex!: number;
+  variant!: WizardVariant;
 }
 </script>
 
