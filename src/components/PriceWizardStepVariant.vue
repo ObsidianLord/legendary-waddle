@@ -20,7 +20,7 @@
           >{{ paragraph }}</p>
         </div>
         <div class="variant__content-main-options">
-          <PriceWizardStepVariantOption
+          <BaseCheckbox
             v-for="(option, optionIndex) in variant.options"
             :key="optionIndex"
             :title="option.title"
@@ -30,18 +30,19 @@
                 getVariantOptionTogglePayload(optionIndex, model.options[optionIndex])
               )
             }"
-          ></PriceWizardStepVariantOption>
-          <PriceWizardStepVariantSelect
+          ></BaseCheckbox>
+          <BaseSelect
             v-for="(selectOption, selectOptionIndex) in variant.select"
             :key="selectOptionIndex"
-            :stepIndex="stepIndex"
-            :variantIndex="variantIndex"
-            :selectIndex="selectOptionIndex"
-          ></PriceWizardStepVariantSelect>
-          <PriceWizardStepVariantButton
-            :stepIndex="stepIndex"
-            :variantIndex="variantIndex"
-          ></PriceWizardStepVariantButton>
+            :value="selectOption.items[model.select[selectOptionIndex]].title"
+            :title="selectOption.title"
+            :items="selectOption.items.map((item) => item.title)"
+            :onChange="(event) => { onSelectChange(selectOptionIndex, event) }"
+          ></BaseSelect>
+          <BaseButton
+            :selected="selected"
+            :on-click="selectCurrentVariant"
+          ></BaseButton>
         </div>
       </div>
     </div>
@@ -50,19 +51,19 @@
 
 <script lang="ts">
 import formatPrice from '@/util/formatPrice';
-import PriceWizardStepVariantSelect from '@/components/controls/PriceWizardStepVariantSelect.vue';
-import PriceWizardStepVariantOption from '@/components/controls/PriceWizardStepVariantOption.vue';
-import PriceWizardStepVariantButton from '@/components/controls/PriceWizardStepVariantButton.vue';
+import BaseSelect from '@/components/common/BaseSelect.vue';
+import BaseCheckbox from '@/components/common/BaseCheckbox.vue';
+import BaseButton from '@/components/common/BaseButton.vue';
 import { VariantInput } from '@/types/StepInput';
-import { WizardVariant } from '@/types/WizardStep';
+import { Option, WizardVariant } from '@/types/WizardStep';
 import { Options, Vue } from 'vue-class-component';
-import { mapMutations, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 @Options({
   components: {
-    PriceWizardStepVariantSelect,
-    PriceWizardStepVariantOption,
-    PriceWizardStepVariantButton,
+    BaseSelect,
+    BaseCheckbox,
+    BaseButton,
   },
 
   props: {
@@ -91,6 +92,10 @@ import { mapMutations, mapState } from 'vuex';
       },
     }),
 
+    selected(): boolean {
+      return this.model.isSelected;
+    },
+
     price(): number {
       let sum = 0;
       sum += this.variant.price_default;
@@ -111,7 +116,8 @@ import { mapMutations, mapState } from 'vuex';
   },
 
   methods: {
-    ...mapMutations(['setVariantOption']),
+    ...mapMutations(['setVariantOption', 'setSelectOption']),
+    ...mapActions(['selectVariant']),
     getVariantOptionTogglePayload(optionIndex: number, oldVal: boolean) {
       return {
         stepIndex: this.stepIndex,
@@ -119,6 +125,24 @@ import { mapMutations, mapState } from 'vuex';
         optionIndex,
         newVal: !oldVal,
       };
+    },
+    selectCurrentVariant(): void {
+      this.selectVariant({
+        stepIndex: this.stepIndex,
+        variantIndex: this.variantIndex,
+      });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onSelectChange(selectIndex: number, event: any): void {
+      if (event !== null && event.target) {
+        this.setSelectOption({
+          stepIndex: this.stepIndex,
+          variantIndex: this.variantIndex,
+          selectIndex,
+          newVal: this.variant.select[selectIndex]
+            .items.map((item: Option): string => item.title).indexOf(event.target.value),
+        });
+      }
     },
   },
 })
